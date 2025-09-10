@@ -129,7 +129,7 @@ y_pred_nb = nb_classifier.predict(X_test_tfidf)
 
 accuracy_nb = accuracy_score(y_test, y_pred_nb)
 
-print("The Classification Report")
+print("The Classification Report For Naives Bayes Model")
 print(classification_report(y_test, y_pred_nb, target_names=['business', 'entertainment', 'politics', 'sport', 'tech']))
 
 """ LOGISTIC REGRESSION MODEL """
@@ -142,7 +142,7 @@ y_pred_lr = lr_classifier.predict(X_test_tfidf)
 
 accuracy_lr = accuracy_score(y_test, y_pred_lr)
 
-print("The Classification Report")
+print("The Classification Report For Logistic Regression Model")
 print(classification_report(y_test, y_pred_lr, target_names=['business', 'entertainment', 'politics', 'sport', 'tech']))
 
 
@@ -181,13 +181,50 @@ categories = ['business', 'entertainment', 'politics', 'sport', 'tech']
 # Create a DataFrame for feature importance for each class
 feature_importance_df = pd.DataFrame(coefficient.T, index= feature_names, columns= categories)
 
-for category in categories:
-    print(f"\n--- Top 10 features for: {category.upper()} ---")
-    # Sort the column for this category and show top 10 (most positive coefficients)
-    top_10 = feature_importance_df[category].sort_values(ascending=False).head(10)
-    print(top_10)
+# Set up the plot
+fig, axes = plt.subplots(2, 3, figsize=(15, 10))  # 2 rows, 3 columns (5 categories + legend)
+fig.suptitle('Top 4 Most Important Words for Each Category', fontsize=16, fontweight='bold')
 
-    print(f"\n--- Bottom 10 features for: {category.upper()} ---")
-    # Show bottom 10 (most negative coefficients). These are words that make the article LESS likely to be this category.
-    bottom_10 = feature_importance_df[category].sort_values(ascending=True).head(10)
-    print(bottom_10)
+# Flatten the axes array for easier indexing
+axes = axes.flatten()
+
+# Colors for each category for visual distinction
+colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']
+
+for i, category in enumerate(categories):
+    # Get top 4 features for this category (most positive coefficients)
+    top_4 = feature_importance_df[category].sort_values(ascending=False).head(4)
+    
+    # Create horizontal bar plot
+    bars = axes[i].barh(range(len(top_4)), top_4.values, color=colors[i], alpha=0.7)
+    
+    # Customize the subplot
+    axes[i].set_title(f'{category.upper()}', fontweight='bold')
+    axes[i].set_yticks(range(len(top_4)))
+    axes[i].set_yticklabels(top_4.index, fontsize=10)
+    axes[i].set_xlabel('Coefficient Value')
+    axes[i].grid(axis='x', alpha=0.3)
+    
+    # Add value labels on the bars
+    for j, value in enumerate(top_4.values):
+        axes[i].text(value + (0.01 if value >= 0 else -0.01), j, 
+                    f'{value:.3f}', 
+                    va='center', 
+                    fontweight='bold',
+                    color='black' if abs(value) > 0.1 else 'gray')
+
+# Remove the empty subplot (6th position)
+fig.delaxes(axes[5])
+
+# Adjust layout and display
+plt.tight_layout()
+plt.subplots_adjust(top=0.92)
+plt.show()
+
+# Also show the data in tabular format for reference
+print("\nTop 4 words for each category:")
+for category in categories:
+    top_4 = feature_importance_df[category].sort_values(ascending=False).head(4)
+    print(f"\n{category.upper()}:")
+    for word, importance in top_4.items():
+        print(f"  {word}: {importance:.4f}")
