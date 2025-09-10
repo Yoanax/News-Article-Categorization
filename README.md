@@ -55,7 +55,7 @@ Make sure you have Python and `pip` installed.
 
 ## 📊 Results
 <!-- Proves your project works and shows off your achievements. -->
-After training on 40,000 reviews and testing on 10,000 reviews, the Naives Bayes model achieved the following results:
+The Naives Bayes model achieved the following results:
 
 | Metric     | Score |
 |------------|-------|
@@ -79,7 +79,12 @@ The Logistic Regression Model achieved the following results:
 ![Confusion Matrix](images/confusion_matrix.png) *This image shows how many reviews were classified correctly and incorrectly.*
 
 ---
+## 📊 Word Importances
+After training on the training data set, the Logistic Regression Model determined this Top 4 words were the most important in each category.
 
+![Top 4 Most Important Words](images/importances_words.png) *This image shows the importance of the TOP 4 words of each category.*
+
+---
 ## 🗂️ Project Structure
 <!-- Helps people navigate your code without getting lost. -->
 Movie-Review-Sentiment-Analysis/
